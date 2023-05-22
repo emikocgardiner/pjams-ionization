@@ -10,7 +10,7 @@ Created on Thu Dec  7 18:31:26 2017
 ## modified with the table that I made by hand including the results from imfit
 import numpy as np
 import sys, os
-VICO_loc = '/scratch/ecg6wm/VICO'
+VICO_loc = '/Users/emigardiner/VICO/pjams-ionization'
 sys.path.append(VICO_loc+'/AngladaRosero2019')
 
 radio_dat = np.genfromtxt( VICO_loc+'/AngladaRosero2019/AngladaData/SOMA_Radio_data_table_core_v2.txt', names=True, dtype=None )
