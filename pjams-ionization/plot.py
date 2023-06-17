@@ -14,6 +14,8 @@ import matplotlib.cm as cm
 FIGSIZE = 6
 FONTSIZE = 13
 GOLDEN_RATIO = (np.sqrt(5) - 1) / 2
+COLORS = np.array(['#ff3333', '#ff8c1a', '#bfbd2e',  '#5cd699', '#51a6fb', '#a65eed'])
+
 
 mpl.style.use('default')   # avoid dark backgrounds from dark theme vscode
 plt.rcParams['axes.grid'] = True
