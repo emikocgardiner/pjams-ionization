@@ -1,3 +1,7 @@
 Data/
 
 .DS_Store
+
+pjams-ionization/__pycache__/
+
+__pycache__/
