@@ -5,6 +5,7 @@
 
 import sys, os
 VICO_loc = '/Users/emigardiner/VICO/pjams-ionization'
+
 sys.path.append(VICO_loc)
 from zeusmp_snapshot_reader import read_zeusmp_snapshot
 from zeusmp_snapshot_reader import ScaleFactors
@@ -14,6 +15,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from datetime import datetime
 
+
+FREQS = np.array([0.01, 0.05, 0.1, 0.5, 1, 5.3, 23, 43, 100, 230])*10**9 # Hz
 
 class basic_snapshot:
 

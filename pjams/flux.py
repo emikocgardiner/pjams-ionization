@@ -5,12 +5,10 @@ sys.path.append('/Users/emigardiner/VICO/pjams-ionization/pjams-ionization/')
 from zeusmp_snapshot_reader import read_zeusmp_snapshot
 from zeusmp_snapshot_reader import ScaleFactors
 from snapshot import *
-from basic_snapshot import basic_snapshot, 
+from basic_snapshot import basic_snapshot, FREQS, VICO_loc
 import plot
 
 import numpy as np
-
-FREQS = np.array([0.01, 0.05, 0.1, 0.5, 1, 5.3, 23, 43, 100, 230])*10**9 # Hz
 
 
 #################################################
