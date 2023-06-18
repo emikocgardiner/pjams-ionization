@@ -374,3 +374,29 @@ def ionfrac_pil_image(imgfiles, cname, vertical_cbar=False, extracrop=30, debug=
     return allimage
 
 
+#########################################################
+##### Slices PIL Image Functions
+#########################################################
+
+def pil_slices_cbar(allimage, details, saveloc): 
+    leftax = details['left']
+    side = details['side']
+    im0 = Image.open(saveloc+'/cbar_0_density.png')
+    im1 = Image.open(saveloc+'/cbar_1_zvelocity.png')
+    im2 = Image.open(saveloc+'/cbar_2_temp.png')
+    im3 = Image.open(saveloc+'/cbar_3_ionfrac.png')
+    im4 = Image.open(saveloc+'/cbar_4_emissivity.png')
+    cbar_ims = [im0, im1, im2, im3, im4]
+    cbar_height = 0
+    
+    for ii, im in enumerate(cbar_ims):
+        # im = cbar_ims[i]
+        # im = im.resize((side, int(im.height * side/im.width)))
+        if(im.height > cbar_height): cbar_height = im.height
+        # cbar_ims[i] = im
+    imnew = Image.new('RGBA', (allimage.width, allimage.height+cbar_height),
+                 color='white')
+    imnew.paste(allimage, (0,0))
+    for i in range(len(cbar_ims)):
+        imnew.paste(cbar_ims[i], (leftax+side*i, allimage.height))
+    return imnew
