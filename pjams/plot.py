@@ -262,6 +262,33 @@ def pil_image(imgfiles, debug=True, head=0):
     return allimage, details
 
 
+def add_margin(pil_img, top, right, bottom, left, color):
+    width, height = pil_img.size
+    new_width = width + right + left
+    new_height = height + top + bottom
+    result = Image.new(pil_img.mode, (new_width, new_height), color)
+    result.paste(pil_img, (left, top))
+    return result
+
+def img_concat_bottom(im1, im2):
+    """ concatenate second image to the bottom of the first, centered in width
+    
+    """
+    newimg = Image.new('RGBA', (im1.width, im1.height + im2.height),
+                   color='white')
+    newimg.paste(im1, (0, 0))
+    newimg.paste(im2, (int(im1.width/2 - im2.width/2), im1.height))
+    return newimg
+
+def img_concat_right(im1, im2):
+    """ concatenate second image to the right of the first, centered in height
+    
+    """
+    newimg = Image.new('RGBA', (im1.width + im2.width, im1.height),
+                   color='white')
+    newimg.paste(im1, (0, 0))
+    newimg.paste(im2, (im1.width, int(im2.height/2)))
+    return newimg
 
 #########################################################
 ##### Ionization Fraction PIL Image Functions
@@ -309,13 +336,41 @@ def pil_ionfrac_section_breaks(allimage, side, leftax, header):
     draw.line(line2,fill=(0,0,0),width=5)
     return allimage
 
+def pil_ionfrac_cbar(allimage, cname, vertical = False, extracrop = 20):
 
-def ionfrac_pil_image(imgfiles, debug=False):
+    cbimg = Image.open(cname)
+    width, height = cbimg.size
+    side = np.min([width, height])
+
+    if vertical:
+        cropleft = side+extracrop
+        cropright = width
+        croptop = 0
+        cropbottom = height
+        
+    else:
+        cropleft = 0
+        cropright = width
+        croptop = side+extracrop
+        cropbottom = height
+
+    cbimg = cbimg.crop((cropleft, croptop, cropright, cropbottom))
+    cbimg = cbimg.resize((cbimg.width*3, cbimg.height*3))
+    if vertical:
+        newimage = img_concat_right(allimage, cbimg)
+    else:
+        newimage = img_concat_bottom(allimage, cbimg)
+    return newimage
+
+def ionfrac_pil_image(imgfiles, cname, vertical_cbar=False, extracrop=30, debug=False):
     allimage, details = pil_image(imgfiles, head=150, debug=debug)
     side = details['side']
     left = details['left']
     head = details['head']
     allimage = pil_ionfrac_header(allimage, side, left, head)
     allimage = pil_ionfrac_section_breaks(allimage, side, left, head)
+    allimage = pil_ionfrac_cbar(allimage, cname, vertical_cbar, extracrop)
     # allimage = add_mass_labels(allimage, side, left, head, labels, debug=debug)
     return allimage
+
+
