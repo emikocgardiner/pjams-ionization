@@ -18,8 +18,11 @@ from IPython.display import Image as DisplayImage
 FIGSIZE = 6
 FONTSIZE = 13
 GOLDEN_RATIO = (np.sqrt(5) - 1) / 2
-COLORS = np.array(['#ff3333', '#ff8c1a', '#bfbd2e',  '#5cd699', '#51a6fb', '#a65eed'])
-ALPHA = 0.6
+
+
+COLORS = np.array(['#ff1a53', '#ff8c1a', '#c9c91d',  '#5cd699', '#51a6fb', '#a65eed'])
+# COLORS = np.array(['#ff3333', '#ff8c1a', '#bfbd2e',  '#5cd699', '#51a6fb', '#a65eed'])
+ALPHA = 0.65
 
 MYFONT = ImageFont.truetype('/System/Library/Fonts/Supplemental/Times New Roman.ttf', 65)
 SMALLFONT = ImageFont.truetype('/System/Library/Fonts/Supplemental/Times New Roman.ttf', 55)
