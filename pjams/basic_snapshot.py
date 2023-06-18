@@ -112,13 +112,15 @@ class basic_snapshot:
             print('ScaleFluxes_ratio[f,s] loaded')  
             return self.ScaleFluxes_ratio
     
-    def load_fluxes(self):
+    def load_fluxes(self, debug=True):
         data_path = (VICO_loc+'/Data/')
         flux_data = np.load(data_path+self.name+'/'+self.name+'_ScaleFluxes.npz')
         self.ScaleFluxes = flux_data['ScaleFluxes']
-        self.zScaleFluxes = flux_data['zScaleFluxes']
-        self.HeightFluxDensities = flux_data['HeightFluxDensities']
+        if debug: print('ScaleFluxes[f,s] loaded')  
+        # self.zScaleFluxes = flux_data['zScaleFluxes']
+        # self.HeightFluxDensities = flux_data['HeightFluxDensities']
         flux_data.close()
         ratio_data = np.load(data_path+self.name+'/'+self.name+'_ScaleFluxes_constFalse.npz')
         self.ScaleFluxes_ratio = ratio_data['ScaleFluxes_const']
+        if debug: print('ScaleFluxes_ratio[f,s] loaded')  
         ratio_data.close()

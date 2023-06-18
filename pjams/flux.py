@@ -44,7 +44,7 @@ def get_z_segments(x1, targets=np.linspace(0,26000,27)):
 #### Calculate and Save Flux Profiles
 #################################################
 
-def flux_in_slice(snap, InuA, zmin, zmax, norm):
+def flux_in_slice(snap, InuA, zmin, zmax, norm=True):
     Fnu=0
     for ii in range(zmin, zmax):
         for jj in range(len(snap.x2)):
@@ -68,10 +68,10 @@ def load_fluxprof(snap, ratio=False, debug=True):
     data_path = (VICO_loc+'/Data/'+snap.name+'/')
     if ratio:
         file= np.load((data_path+'flux_prof_ratio.npz'))
-        snap.flux_profile_ratio = file['flux_prof_ratio']
+        snap.flux_prof_ratio = file['flux_prof_ratio']
     else: 
         file = np.load((data_path+'flux_prof.npz'))
-        snap.flux_profile = file['flux_prof']
+        snap.flux_prof = file['flux_prof']
     if debug: print(snap, 'flux_profile loaded')
 
 
@@ -138,5 +138,25 @@ def prep_res_snapshots(rnums = np.array([9, 21, 39, 54])):
         snap.x2 = hr_snap.x2
         snap.x3 = hr_snap.x3
         snap.calculate_deltas()
+
+    return snaps_lr, snaps_mr, snaps_hr
+
+def prep_spec_snapshots(rnums = np.array([9, 21, 39, 54]), debug=False):
+
+    snaps_lr = np.empty_like(rnums, dtype=snapshot)
+    snaps_mr = np.empty_like(rnums, dtype=snapshot)
+    snaps_hr = np.empty_like(rnums, dtype=snapshot)
+
+    # get basic snapshots for the rest
+    for ii, num in enumerate(rnums):
+        snaps_lr[ii] = basic_snapshot(snap=num, name = ('Snap%03d_nlr' % num))
+        snaps_mr[ii] = basic_snapshot(snap=num, name = ('Snap%03d_n' % num))
+        snaps_hr[ii] = basic_snapshot(snap=num, name = ('Snap%03d_nhr' % num))
+
+    # assign res positions to the rest
+    for snaps in [snaps_lr, snaps_mr, snaps_hr]:
+        for ii, snap in enumerate(snaps):
+            snap.load_fluxes(debug=debug)
+            # snap.load_scalefluxes_const(False)
 
     return snaps_lr, snaps_mr, snaps_hr
