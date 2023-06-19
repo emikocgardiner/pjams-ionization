@@ -89,14 +89,14 @@ def mass_ionfrac_proj_pcolormesh(Snap, year, scale, vmin, vmax, v, cmap=new_cmap
             cbar = fig.colorbar(cont, orientation = 'vertical', 
                                 fraction=0.038, pad=cbar_pad, extend='min')
             cbar.set_label(label = (r'log10($\langle\chi_\mathrm{H+}\rangle$ )'),
-                          fontsize = 18)
-            cbar.ax.tick_params(rotation=45, labelsize = 13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
         else:
             cbar = fig.colorbar(cont, orientation = 'horizontal', 
                                 fraction=0.038, pad=cbar_pad, extend='min')
             cbar.set_label(label = (r'log10($\langle\chi_\mathrm{H+}\rangle$ )'),
-                          fontsize=18)
-            cbar.ax.tick_params(rotation=45, labelsize=13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
             
     if(show_contours):
         cntr = ax.contour(Snap.X2_1v , Snap.X1_2v, np.rot90(Snap.maxv1), 
@@ -160,14 +160,14 @@ def mass_ionfrac_proj_const_pcolormesh(Snap, year, const, scale, vmin, vmax, v, 
             cbar = fig.colorbar(cont, orientation = 'vertical', 
                                 fraction=0.038, pad=cbar_pad, extend='min')
             cbar.set_label(label = (r'log10($\langle\chi_\mathrm{H+}\rangle$ )'),
-                          fontsize = 18)
-            cbar.ax.tick_params(rotation=45, labelsize = 13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
         else:
             cbar = fig.colorbar(cont, orientation = 'horizontal', 
                                 fraction=0.038, pad=cbar_pad, extend='min')
             cbar.set_label(label = (r'log10($\langle\chi_\mathrm{H+}\rangle$ )'),
-                          fontsize=18)
-            cbar.ax.tick_params(rotation=45, labelsize=13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
             
     if(show_contours):
         cntr = ax.contour(Snap.X2_1v , Snap.X1_2v, np.rot90(Snap.maxv1), 
@@ -235,14 +235,14 @@ def intensity_proj_pcolormesh(Snap, year, scale, f, vmin, vmax, cmap='CMRmap',
             cbar = fig.colorbar(cont, orientation = 'vertical', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($I_\nu$ / [mJy/as])'),
-                          fontsize = 18)
-            cbar.ax.tick_params(rotation=45, labelsize = 12)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
         else:
             cbar = fig.colorbar(cont, orientation = 'horizontal', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($I_\nu$ / [mJy/as])'),
-                          fontsize=18)
-            cbar.ax.tick_params(rotation=45, labelsize=12)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
     ax.text(.02, .29, (freq_strings[f]+'GHz'), ha='left', va='top', 
             transform=ax.transAxes, fontsize = 20, color='white', weight='bold')
     ax.text(.02, .3, ('\n'+year), ha='left', va='top', 
@@ -291,14 +291,14 @@ def intensity_proj_const_pcolormesh(Snap, year, const, scale, f, vmin, vmax, cma
             cbar = fig.colorbar(cont, orientation = 'vertical', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($I_\nu$ / [mJy/as])'),
-                          fontsize = 18)
-            cbar.ax.tick_params(rotation=45, labelsize = 12)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
         else:
             cbar = fig.colorbar(cont, orientation = 'horizontal', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($I_\nu$ / [mJy/as])'),
-                          fontsize=18)
-            cbar.ax.tick_params(rotation=45, labelsize=12)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
     ax.text(.02, .29, (freq_strings[f]+'GHz'), ha='left', va='top', 
             transform=ax.transAxes, fontsize = 20, color='white', weight='bold')
     ax.text(.02, .3, ('\n'+year), ha='left', va='top', 
@@ -362,14 +362,14 @@ def iontemp_proj_pcolormesh(Snap, year, scale, vmin, vmax,
             cbar = fig.colorbar(cont, orientation = 'vertical', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($\langle T_\mathrm{H+}\rangle$ / [K])'),
-                          fontsize = 18)
-            cbar.ax.tick_params(rotation=45, labelsize = 13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
         else:
             cbar = fig.colorbar(cont, orientation = 'horizontal', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($\langle T_\mathrm{H+}\rangle$ / [K])'),
-                          fontsize=18)
-            cbar.ax.tick_params(rotation=45, labelsize=13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
     
     ax.text(.02, .3, (r'$\mathbf{\langle T_{H+}\rangle}$'+'\n'+year), ha='left', va='top', 
             transform=ax.transAxes, fontsize = 28, weight='bold', color='white')
@@ -425,14 +425,14 @@ def iontemp_proj_ratio_pcolormesh(Snap, year, scale, vmin, vmax,
             cbar = fig.colorbar(cont, orientation = 'vertical', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($\langle T_\mathrm{H+}\rangle$ / [K])'),
-                          fontsize = 18)
-            cbar.ax.tick_params(rotation=45, labelsize = 13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
         else:
             cbar = fig.colorbar(cont, orientation = 'horizontal', 
                                 fraction=0.038, pad=cbar_pad)
             cbar.set_label(label = (r'log($\langle T_\mathrm{H+}\rangle$ / [K])'),
-                          fontsize=18)
-            cbar.ax.tick_params(rotation=45, labelsize=13)
+                          fontsize = 20)
+            cbar.ax.tick_params(rotation=45, labelsize = 18)
     
     ax.text(.02, .3, (r'$\mathbf{\langle T_{H+}\rangle}$'+'\n'+year), ha='left', va='top', 
             transform=ax.transAxes, fontsize = 28, weight='bold', color='white')
