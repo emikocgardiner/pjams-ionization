@@ -22,6 +22,7 @@ class basic_snapshot:
 
     def __init__(self, snap, name, npz_location=None):
         self.name = name
+        self.num = snap
 
         if npz_location is None:
             npz_location = npz_location = VICO_loc+'/Data/'+self.name+'/'+self.name+'_simulation_data.npz'
@@ -127,3 +128,8 @@ class basic_snapshot:
         self.ScaleFluxes_ratio = ratio_data['ScaleFluxes_const']
         if debug: print('ScaleFluxes_ratio[f,s] loaded')  
         ratio_data.close()
+
+
+    def load_variabilities(self):
+        path = (VICO_loc+'/Data/VariabilityArrays2/%03d_n_variabilities.npz' % self.num)
+        self.Variabilities = np.load(path, allow_pickle=True)
