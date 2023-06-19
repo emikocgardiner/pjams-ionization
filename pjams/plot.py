@@ -21,6 +21,9 @@ GOLDEN_RATIO = (np.sqrt(5) - 1) / 2
 
 
 COLORS = np.array(['#ff1a53', '#ff8c1a', '#c9c91d',  '#5cd699', '#51a6fb', '#a65eed'])
+SCALECOLORS = np.array(['#9966cc', '#667fcc', '#66ccb3', '#b3cc66', '#cc9966', '#cc6666' ]) # corresponds to 1000 au to 25000 au
+SCALES = np.array([1000, 2000, 4000, 8000, 16000, 25000])
+
 # COLORS = np.array(['#ff3333', '#ff8c1a', '#bfbd2e',  '#5cd699', '#51a6fb', '#a65eed'])
 ALPHA = 0.65
 
