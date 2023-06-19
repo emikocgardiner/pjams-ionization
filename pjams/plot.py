@@ -280,15 +280,43 @@ def img_concat_bottom(im1, im2):
     newimg.paste(im2, (int(im1.width/2 - im2.width/2), im1.height))
     return newimg
 
-def img_concat_right(im1, im2):
+def img_concat_right(im1, im2, yy=None):
     """ concatenate second image to the right of the first, centered in height
     
     """
     newimg = Image.new('RGBA', (im1.width + im2.width, im1.height),
                    color='white')
     newimg.paste(im1, (0, 0))
-    newimg.paste(im2, (im1.width, int(im2.height/2)))
+    if yy == None:
+        yy = int(im1.height/2 - im2.height/2)
+    newimg.paste(im2, (im1.width, int(yy)))
     return newimg
+
+
+def save_cbar(cname, savename=None, orientation='horizontal', extracrop=0):
+    """ save the colorbar from a figure saved at cname. The figure must not have axes labels.
+    
+    """
+    cbimg = Image.open(cname)
+    width, height = cbimg.size
+    side = np.min([width, height])
+    if orientation=='horizontal':
+        left = 0
+        right = width
+        top = width+extracrop
+        bottom = height
+    elif orientation=='vertical':
+        left = side+extracrop
+        right = width
+        top = 0
+        bottom = height
+    else:
+        print("orientation must be one of 'horizontal' or 'vertical'")
+    cbimg = cbimg.crop((left, top, right, bottom))
+    if savename is not None:
+        cbimg.save(savename)
+    return cbimg
+
 
 #########################################################
 ##### Ionization Fraction PIL Image Functions
