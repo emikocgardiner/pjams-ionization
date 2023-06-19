@@ -20,6 +20,7 @@ MYFONT = ImageFont.truetype('/System/Library/Fonts/Supplemental/Times New Roman.
 SMALLFONT = ImageFont.truetype('/System/Library/Fonts/Supplemental/Times New Roman.ttf', 55)
 VMIN = -3
 VMAX = 0
+V_MINS = np.array([1, 10, 100])
 
 r_kpc = 1
 heights_and_scales = np.load(VICO_loc+'/Data/heights_and_scales.npz')
@@ -33,7 +34,7 @@ colors_cont = ['#8080ff', '#ff99ff', 'white']
 #################################################
 #### Max velocity Arrays for Contours
 #################################################
-v_mins = np.array([1,10,100])
+v_mins = V_MINS
 
 def max_velocity_proj_array(snap, v_min):
     snap.maxv1 = np.zeros((len(snap.x1), len(snap.x2)))
