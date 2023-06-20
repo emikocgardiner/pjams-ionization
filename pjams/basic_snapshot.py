@@ -70,6 +70,11 @@ class basic_snapshot:
                     self.volumes[i,j,k] = self.del1[i] * self.del2[j] * self.del3[k]
         print('volumes[][][] complete, units: cm^3')
 
+    def calculate_mids(self):
+        self.mid1 = (int)((len(self.x1))/2 - 1)
+        self.mid2 = (int)((len(self.x2))/2 - 1)
+        self.mid3 = (int)((len(self.x3))/2 - 1)
+
     ####################################################################################
     ################## load all intensity and flux variables ###########################
     ####################################################################################
@@ -133,3 +138,35 @@ class basic_snapshot:
     def load_variabilities(self):
         path = (VICO_loc+'/Data/VariabilityArrays2/%03d_n_variabilities.npz' % self.num)
         self.Variabilities = np.load(path, allow_pickle=True)
+
+    def load_zvelocities(self):
+        path = (VICO_loc+'/Data/zvelocities/%s_v1.npz' % self.name)
+        file = np.load(path)
+        self.v1 = file['v1']
+
+    def load_densities(self):
+        path = (VICO_loc+'/Data/densities/%s_dens.npz' % self.name)
+        file = np.load(path)
+        self.dens = file['d']
+
+
+    # Load shock variables from saved array with np.load
+    def load_shock_variables(self, with_times = False, debug=False):
+        data_path = (VICO_loc+'/Data/'+self.name+'/')
+        loaded_shock_arrays = np.load(data_path+self.name+'_shock_arrays.npz')
+        self.del1 = loaded_shock_arrays['del1']
+        self.del2 = loaded_shock_arrays['del2']
+        self.del3 = loaded_shock_arrays['del3']
+        self.volumes = loaded_shock_arrays['volumes']
+        self.temperatures = loaded_shock_arrays['temperatures']
+        self.ion_fractions = loaded_shock_arrays['ion_fractions']
+        self.volume_densities = loaded_shock_arrays['volume_densities']  
+        if debug:
+            print('del1[], del2[], del3[] loaded, units: cm')
+            print('volumes[][][] loaded, units: cm^3')
+            print('temperatures[][][] loaded, units: K')        
+            print('ion_fractions[][][] loaded, units: none')        
+            print('volume_densities[][][] loaded, units: cm^-3')
+        if(with_times):
+            self.load_cooling_times()
+            self.load_flow_times()

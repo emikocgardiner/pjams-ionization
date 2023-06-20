@@ -226,7 +226,7 @@ def figax(figsize=[7, 5], ncols=1, nrows=1, sharex=False, sharey=False, squeeze=
 #### PIL Images
 #########################################################
 
-def pil_image(imgfiles, debug=True, head=0):
+def pil_image(imgfiles, debug=False, head=0):
     """ 
     Build a PIL image using the imgs in imgfiles
     First row should include y-axes and bottom row should include x-axes.
@@ -458,3 +458,46 @@ def pil_projs_cbar(allimage, details, saveloc, ratio=False):
     for i in range(len(cbar_ims)):
         imnew.paste(cbar_ims[i], (leftax+side*i, allimage.height))
     return imnew
+
+def pil_cbar(allimage, details, saveloc, cbar_ims):
+    leftax = details['left']
+    side = details['side']
+     
+    cbar_height = 0
+    for ii, im in enumerate(cbar_ims):
+        # im = cbar_ims[i]
+        # im = im.resize((side, int(im.height * side/im.width)))
+        if(im.height > cbar_height): cbar_height = im.height
+        # cbar_ims[i] = im
+    imnew = Image.new('RGBA', (allimage.width, allimage.height+cbar_height),
+                 color='white')
+    imnew.paste(allimage, (0,0))
+    for i in range(len(cbar_ims)):
+        imnew.paste(cbar_ims[i], (leftax+side*i, allimage.height))
+    return imnew
+
+
+def pil_res_cbar(allimage, details, saveloc): 
+    im0 = Image.open(saveloc+'/cbar_density.png')
+    im1 = Image.open(saveloc+'/cbar_temp.png')
+    im2 = Image.open(saveloc+'/cbar_ionfrac_noratio.png')
+    im3 = Image.open(saveloc+'/cbar_intensity_noratio.png')
+    im4 = Image.open(saveloc+'/cbar_ionfrac_ratio.png')
+    im5 = Image.open(saveloc+'/cbar_intensity_ratio.png')
+    cbar_ims = [im0, im1, im2, im3, im4, im5]
+
+    imnew = pil_cbar(allimage, details, saveloc, cbar_ims)
+    return imnew
+    # cbar_height = 0
+    
+    # for ii, im in enumerate(cbar_ims):
+    #     # im = cbar_ims[i]
+    #     # im = im.resize((side, int(im.height * side/im.width)))
+    #     if(im.height > cbar_height): cbar_height = im.height
+    #     # cbar_ims[i] = im
+    # imnew = Image.new('RGBA', (allimage.width, allimage.height+cbar_height),
+    #              color='white')
+    # imnew.paste(allimage, (0,0))
+    # for i in range(len(cbar_ims)):
+    #     imnew.paste(cbar_ims[i], (leftax+side*i, allimage.height))
+    # return imnew
