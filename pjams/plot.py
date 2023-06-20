@@ -320,6 +320,22 @@ def save_cbar(cname, savename=None, orientation='horizontal', extracrop=0):
         cbimg.save(savename)
     return cbimg
 
+def pil_cbar(allimage, details, saveloc, cbar_ims):
+    leftax = details['left']
+    side = details['side']
+     
+    cbar_height = 0
+    for ii, im in enumerate(cbar_ims):
+        # im = cbar_ims[i]
+        # im = im.resize((side, int(im.height * side/im.width)))
+        if(im.height > cbar_height): cbar_height = im.height
+        # cbar_ims[i] = im
+    imnew = Image.new('RGBA', (allimage.width, allimage.height+cbar_height),
+                 color='white')
+    imnew.paste(allimage, (0,0))
+    for i in range(len(cbar_ims)):
+        imnew.paste(cbar_ims[i], (leftax+side*i, allimage.height))
+    return imnew
 
 #########################################################
 ##### Ionization Fraction PIL Image Functions
@@ -433,48 +449,20 @@ def pil_slices_cbar(allimage, details, saveloc):
     return imnew
 
 def pil_projs_cbar(allimage, details, saveloc, ratio=False): 
-    leftax = details['left']
-    side = details['side']
+
     im0 = Image.open(saveloc+'/cbar_ionfrac.png')
-    im1 = Image.open(saveloc+'/cbar_ionfrac.png')
+    im1 = Image.open(saveloc+'/cbar_iontemp.png')
     if ratio:
         im2 = Image.open(saveloc+'/cbar_intensity_cooling.png')
     else:
         im2 = Image.open(saveloc+'/cbar_intensity_flooded.png')
     im3 = im2
     cbar_ims = [im0, im1, im2, im3]
-    cbar_height = 0
-    
-    for ii, im in enumerate(cbar_ims):
-        # im = cbar_ims[i]
-        # im = im.resize((side, int(im.height * side/im.width)))
-        if(im.height > cbar_height): cbar_height = im.height
-        # cbar_ims[i] = im
-    print(f"{cbar_height=}")
-    print(f"{allimage.width=}")
-    imnew = Image.new('RGBA', (allimage.width, allimage.height+cbar_height),
-                 color='white')
-    imnew.paste(allimage, (0,0))
-    for i in range(len(cbar_ims)):
-        imnew.paste(cbar_ims[i], (leftax+side*i, allimage.height))
+
+    imnew = pil_cbar(allimage, details, saveloc, cbar_ims)
     return imnew
 
-def pil_cbar(allimage, details, saveloc, cbar_ims):
-    leftax = details['left']
-    side = details['side']
-     
-    cbar_height = 0
-    for ii, im in enumerate(cbar_ims):
-        # im = cbar_ims[i]
-        # im = im.resize((side, int(im.height * side/im.width)))
-        if(im.height > cbar_height): cbar_height = im.height
-        # cbar_ims[i] = im
-    imnew = Image.new('RGBA', (allimage.width, allimage.height+cbar_height),
-                 color='white')
-    imnew.paste(allimage, (0,0))
-    for i in range(len(cbar_ims)):
-        imnew.paste(cbar_ims[i], (leftax+side*i, allimage.height))
-    return imnew
+
 
 
 def pil_res_cbar(allimage, details, saveloc): 
