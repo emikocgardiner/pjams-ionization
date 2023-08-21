@@ -428,7 +428,8 @@ def ionfrac_pil_image(imgfiles, cname, vertical_cbar=False, extracrop=30, debug=
 def pil_slices_cbar(allimage, details, saveloc): 
     leftax = details['left']
     side = details['side']
-    im0 = Image.open(saveloc+'/cbar_0_density.png')
+    # im0 = Image.open(saveloc+'/cbar_0_density.png')
+    im0 = Image.open(saveloc+'/cbar_0_numdensity.png')
     im1 = Image.open(saveloc+'/cbar_1_zvelocity.png')
     im2 = Image.open(saveloc+'/cbar_2_temp.png')
     im3 = Image.open(saveloc+'/cbar_3_ionfrac.png')

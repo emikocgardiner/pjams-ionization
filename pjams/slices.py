@@ -76,6 +76,59 @@ def density_slice_pcolormesh(Snap, year, scale, vmin, vmax, cmap='cividis',
         plt.close(fig)
     return filename
 
+def numdensity_slice_pcolormesh(Snap, year, scale, vmin, vmax, cmap='cividis', 
+                        saveloc=False, show=False, show_cbar= False, 
+                             show_xlabels=True, show_ylabels=True, cbar_pad=.2):
+    Snap.X1_2v, Snap.X2_1v = np.meshgrid(Snap.x1, Snap.x2)
+    fig = plt.figure(figsize = (4,4))
+    fig.tight_layout()
+    ax = plt.subplot()
+    ax.set_aspect(1)
+    ax.set_xlim(-scale/2, scale/2)
+    ax.set_ylim(0, scale)
+    ax.set_facecolor('darkkhaki')
+
+    numdensity = Snap.q['d'][:,:,Snap.mid3] / Constants.m_H
+
+    cont = ax.pcolormesh(Snap.X2_1v, Snap.X1_2v, np.log10(np.rot90(numdensity)), 
+                               vmin=vmin, vmax=vmax, cmap = cmap, shading='nearest')
+#     ax.plot(Snap.x2[9], Snap.x1[0], 
+#             color='cyan', markersize=50, marker='+')
+#     ax.plot(Snap.x2[9], Snap.x1[165], 
+#             color='cyan', markersize=50, marker='+')
+#     ax.plot(Snap.x2[270], Snap.x1[0], 
+#             color='cyan', markersize=50, marker='+')
+#     ax.plot(Snap.x2[270], Snap.x1[165], 
+#             color='cyan', markersize=50, marker='+')
+    
+    if(show_xlabels):
+        ax.set_xticks([-scale*.25, 0, scale*.25])
+        ax.set_xlabel('$x$ (au)', fontsize=28)
+        ax.tick_params(axis='x', labelsize=20)
+    else:
+        ax.tick_params(bottom=False)
+        ax.set_xticks([])
+    if(show_ylabels):
+        ax.set_yticks([scale*.25,scale*.5,scale*.75])
+        ax.set_ylabel('$z$ (au)', fontsize=28)
+        ax.tick_params(axis='y', labelsize=20)
+    else:
+        ax.tick_params(left=False)
+        ax.set_yticks([])
+        
+    if(show_cbar):
+        cbar = fig.colorbar(cont, orientation = 'horizontal', 
+                            fraction=0.038, pad=cbar_pad)
+        cbar.set_label(label = (r'log($n_\mathrm{H}$ / [cm$^{-3}$])'), 
+                       fontsize=20,)
+        cbar.ax.tick_params(rotation=45, labelsize = 18)
+    ax.text(.02, .3, (r'$\mathbf{n_\mathrm{H}}$'+'\n'+year), ha='left', va='top', 
+            transform=ax.transAxes, fontsize = 28, weight='bold', color='black')#, alpha=.5)
+    filename = saveloc+'/'+Snap.name+'_0_numdensity_'+str(scale)+'AU.png'
+    if (saveloc != False): 
+        fig.savefig(filename, bbox_inches='tight')
+        plt.close(fig)
+    return filename
 
 def zvelocity_slice_pcolormesh(Snap, year, scale, vmin, vmax, cmap=viridis_white_r, 
                                saveloc=False, show=False, show_cbar= False, 
