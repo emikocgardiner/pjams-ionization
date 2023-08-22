@@ -498,57 +498,59 @@ def emis_ionfrac_const_pcolormesh(Snap, year, scale, f, vmin, vmax, v, const=Fal
 
 
 
-def mass_avg_3d_ionfrac(Snap, v_cutoff, scale):
-    numer = 0
-    denom = 0
-    for i in range(len(Snap.x1)):
-        if((Snap.x1[i]) <= scale):
-            for j in range(len(Snap.x2)):
-                if(np.abs(Snap.x2[j] <= scale/2)):
-                    for k in range(len(Snap.x3)):
-                        if(Snap.q['v1'][i,j,k]>=v_cutoff):
-                            numer += (Snap.ion_fractions[i,j,k] * Snap.q['d'][i,j,k] * 
-                                      Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
-                            denom += (Snap.q['d'][i,j,k] * 
-                                      Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
-    if(denom==0): return 0
-    return numer/denom
+# def mass_avg_3d_ionfrac(Snap, v_cutoff, scale):
+#     numer = 0
+#     denom = 0
+#     for i in range(len(Snap.x1)):
+#         if((Snap.x1[i]) <= scale):
+#             for j in range(len(Snap.x2)):
+#                 if(np.abs(Snap.x2[j] <= scale/2)):
+#                     for k in range(len(Snap.x3)):
+#                         if(Snap.q['v1'][i,j,k]>=v_cutoff):
+#                             numer += (Snap.ion_fractions[i,j,k] * Snap.q['d'][i,j,k] * 
+#                                       Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+#                             denom += (Snap.q['d'][i,j,k] * 
+#                                       Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+#     if(denom==0): return 0
+#     return numer/denom
 
-def vol_avg_3d_ionfrac(Snap, v_cutoff, scale):
-    numer = 0
-    denom = 0
-    for i in range(len(Snap.x1)):
-        if((Snap.x1[i]) <= scale):
-            for j in range(len(Snap.x2)):
-                if(np.abs(Snap.x2[j] <= scale/2)):
-                    for k in range(len(Snap.x3)):
-                        if(Snap.q['v1'][i,j,k]>=v_cutoff):
-                            numer += (Snap.ion_fractions[i,j,k]  * 
-                                      Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
-                            denom += (Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
-    if(denom==0): return 0
-    return numer/denom
+# def vol_avg_3d_ionfrac(Snap, v_cutoff, scale):
+#     numer = 0
+#     denom = 0
+#     for i in range(len(Snap.x1)):
+#         if((Snap.x1[i]) <= scale):
+#             for j in range(len(Snap.x2)):
+#                 if(np.abs(Snap.x2[j] <= scale/2)):
+#                     for k in range(len(Snap.x3)):
+#                         if(Snap.q['v1'][i,j,k]>=v_cutoff):
+#                             numer += (Snap.ion_fractions[i,j,k]  * 
+#                                       Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+#                             denom += (Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+#     if(denom==0): return 0
+#     return numer/denom
     
-def emis_avg_3d_ionfrac(Snap, nu, v_cutoff, scale):
-    Snap.load_intensity_variables(nu)
-    numer = 0
-    denom = 0
-    for i in range(len(Snap.x1)):
-        if((Snap.x1[i]) <= scale):
-            for j in range(len(Snap.x2)):
-                if(np.abs(Snap.x2[j] <= scale/2)):
-                    for k in range(len(Snap.x3)):
-                        if(Snap.q['v1'][i,j,k]>=v_cutoff):
-                            numer += (Snap.ion_fractions[i,j,k] * Snap.emission_coefs[i,j,k] * 
-                                      Snap.del3[k])
-                            denom += (Snap.emission_coefs[i,j,k] * 
-                                      Snap.del3[k])
-    if(denom==0): return 0
-    return numer/denom
+# def emis_avg_3d_ionfrac(Snap, nu, v_cutoff, scale):
+#     Snap.load_intensity_variables(nu)
+#     numer = 0
+#     denom = 0
+#     for i in range(len(Snap.x1)):
+#         if((Snap.x1[i]) <= scale):
+#             for j in range(len(Snap.x2)):
+#                 if(np.abs(Snap.x2[j] <= scale/2)):
+#                     for k in range(len(Snap.x3)):
+#                         if(Snap.q['v1'][i,j,k]>=v_cutoff):
+#                             numer += (Snap.ion_fractions[i,j,k] * Snap.emission_coefs[i,j,k] * 
+#                                       Snap.del3[k])
+#                             denom += (Snap.emission_coefs[i,j,k] * 
+#                                       Snap.del3[k])
+#     if(denom==0): return 0
+#     return numer/denom
 
 
 #####################################################################################################
 ################### Map Average ionization fractions for Table ######################################
+#####################################################################################################
+
 
 def calculate_column_mass_densities(Snap):
     Snap.column_mass_densities = np.zeros((len(Snap.x1), len(Snap.x2)))
@@ -607,3 +609,259 @@ def emis_avg_map_ionfrac(Snap, f, v, scale, cooled=False):
                     denom += InuA[i,j] * Snap.del1[i] * Snap.del2[j]
     Snap.avg_map_ionfrac_emis = numer/denom
     return numer/denom
+
+
+
+#####################################################################################################
+################### Profiles ######################################
+#####################################################################################################
+
+def mass_ionfrac_average(Snap, year, xmin, xmax, zmin, zmax, v_min, ymin=0, ymax=False, to_print=False):
+    if(not ymax): ymax = len(Snap.x3)
+    if(to_print): print('(%.1f <= z < %.1f), (%.1f <= x < %.1f), (%.1f <= y <= %.1f)' % 
+                         (Snap.x1[zmin], Snap.x1[zmax], Snap.x2[xmin], Snap.x2[xmax], Snap.x3[ymin], Snap.x3[ymax-1]))
+    numer = 0
+    denom = 0
+    for i in range(zmin, zmax):
+        for j in range(xmin, xmax):
+            for k in range(len(Snap.x3)):
+                if(Snap.q['v1'][i,j,k] >= v_min):
+                    numer += Snap.ion_fractions[i,j,k] * Snap.q['d'][i,j,k] * Snap.del3[k]
+                    denom += Snap.q['d'][i,j,k] * Snap.del3[k]
+    if(denom==0): return 0
+    return(numer/denom)
+def vol_ionfrac_average(Snap, year, xmin, xmax, zmin, zmax, v_min, ymin=0, ymax=False, to_print=False):
+    if(not ymax): ymax = len(Snap.x3)
+    if(to_print): print('(%.1f <= z < %.1f), (%.1f <= x < %.1f), (%.1f <= y <= %.1f)' % 
+                         (Snap.x1[zmin], Snap.x1[zmax], Snap.x2[xmin], Snap.x2[xmax], Snap.x3[ymin], Snap.x3[ymax-1]))
+    numer = 0
+    denom = 0
+    for i in range(zmin, zmax):
+        for j in range(xmin, xmax):
+            for k in range(len(Snap.x3)):
+                if(Snap.q['v1'][i,j,k] >= v_min):
+                    numer += Snap.ion_fractions[i,j,k] * Snap.del3[k]
+                    denom += Snap.del3[k]
+    if(denom==0): return 0
+    return(numer/denom)
+
+def emis_ionfrac_average(Snap, year, nu, xmin, xmax, zmin, zmax, v_min, ymin=0, ymax=False, to_print=False):
+    Snap.load_intensity_variables(nu)
+    if(not ymax): ymax = len(Snap.x3)
+    if(to_print): print('(%.1f <= z < %.1f), (%.1f <= x < %.1f), (%.1f <= y <= %.1f)' % 
+                         (Snap.x1[zmin], Snap.x1[zmax], Snap.x2[xmin], Snap.x2[xmax], Snap.x3[ymin], Snap.x3[ymax-1]))
+    numer = 0
+    denom = 0
+    for i in range(zmin, zmax):
+        for j in range(xmin, xmax):
+            for k in range(len(Snap.x3)):
+                if(Snap.q['v1'][i,j,k] >= v_min):
+                    numer += Snap.ion_fractions[i,j,k] * Snap.emission_coefs[i,j,k] * Snap.del3[k] #with delta
+                    denom += Snap.emission_coefs[i,j,k] * Snap.del3[k]
+    if(denom==0): return 0
+    return(numer/denom)
+
+def make_mass_ionfrac_arrays(
+        Snap, Year, 
+        ionfrac_heights, z_segments, xsquare, xslice, ):
+    Snap.mass_ionfrac_xsquare = np.zeros((len(v_mins), len(ionfrac_heights)))
+    Snap.mass_ionfrac_xslice = np.zeros((len(v_mins), len(ionfrac_heights)))
+    for i in range(25):
+        for v in range(len(v_mins)):
+            Snap.mass_ionfrac_xsquare[v,i] = mass_ionfrac_average(Snap, Year, xsquare[0], xsquare[1], z_segments[i], z_segments[i+1], v_min=v_mins[v])
+            Snap.mass_ionfrac_xslice[v,i] = mass_ionfrac_average(Snap, Year, xslice[0], xslice[1], z_segments[i], z_segments[i+1], v_min=v_mins[v])
+    print('%s mass ionfrac arrays made' % (Year))
+def make_vol_ionfrac_arrays(
+        Snap, Year, 
+        ionfrac_heights, z_segments, xsquare, xslice, ):
+    Snap.vol_ionfrac_xsquare = np.zeros((len(v_mins), len(ionfrac_heights)))
+    Snap.vol_ionfrac_xslice = np.zeros((len(v_mins), len(ionfrac_heights)))
+    for i in range(25):
+        for v in range(len(v_mins)):
+            Snap.vol_ionfrac_xsquare[v,i] = vol_ionfrac_average(Snap, Year, xsquare[0], xsquare[1], z_segments[i], z_segments[i+1], v_min=v_mins[v])
+            Snap.vol_ionfrac_xslice[v,i] = vol_ionfrac_average(Snap, Year, xslice[0], xslice[1], z_segments[i], z_segments[i+1], v_min=v_mins[v])
+    print('%s vol ionfrac arrays made' % (Year))
+def make_emis_ionfrac_arrays(
+        Snap, Year, nu,
+        ionfrac_heights, z_segments, xsquare, xslice, ):
+    Snap.emis_ionfrac_xsquare = np.zeros((len(v_mins), len(ionfrac_heights)))
+    Snap.emis_ionfrac_xslice = np.zeros((len(v_mins), len(ionfrac_heights)))
+    for i in range(25):
+        for v in range(len(v_mins)):
+            Snap.emis_ionfrac_xsquare[v,i] = emis_ionfrac_average(Snap, Year, nu, xsquare[0], xsquare[1], z_segments[i], z_segments[i+1], v_min=v_mins[v])
+            Snap.emis_ionfrac_xslice[v,i] = emis_ionfrac_average(Snap, Year, nu, xslice[0], xslice[1], z_segments[i], z_segments[i+1], v_min=v_mins[v])
+    print('%s emis ionfrac arrays made (nu=%s)' % (Year, str(nu/10**9)))
+
+
+def save_ionfrac_profile(Snap):
+    data_path = (VICO_loc+'/Data/'+Snap.name+'/')
+    np.savez((data_path+Snap.name+'_ionfrac_profile.npz'), 
+             mass_ionfrac_xsquare = Snap.mass_ionfrac_xsquare, mass_ionfrac_xslice = Snap.mass_ionfrac_xslice,
+             vol_ionfrac_xsquare = Snap.vol_ionfrac_xsquare, vol_ionfrac_xslice = Snap.vol_ionfrac_xslice, 
+             emis_ionfrac_xsquare = Snap.emis_ionfrac_xsquare, emis_ionfrac_xslice = Snap.emis_ionfrac_xslice)
+def load_ionfrac_profile(Snap):
+    data_path = (VICO_loc+'/Data/'+Snap.name+'/')
+    loaded_ionfrac_profile= np.load((data_path+Snap.name+'_ionfrac_profile.npz'))
+    Snap.mass_ionfrac_xsquare = loaded_ionfrac_profile['mass_ionfrac_xsquare']
+    Snap.mass_ionfrac_xslice =  loaded_ionfrac_profile['mass_ionfrac_xslice']
+    Snap.vol_ionfrac_xsquare = loaded_ionfrac_profile['vol_ionfrac_xsquare']
+    Snap.vol_ionfrac_xslice = loaded_ionfrac_profile['vol_ionfrac_xslice']
+    Snap.emis_ionfrac_xsquare =  loaded_ionfrac_profile['emis_ionfrac_xsquare']
+    Snap.emis_ionfrac_xslice = loaded_ionfrac_profile['emis_ionfrac_xslice']
+    print(Snap, 'ionfrac_profile loaded')
+
+#############3 ratio
+
+def mass_ionfrac_average_ratio(Snap, year, xmin, xmax, zmin, zmax, v_min, ymin=0, ymax=False, to_print=False):
+    if(not ymax): ymax = len(Snap.x3)
+    if(to_print): print('(%.1f <= z < %.1f), (%.1f <= x < %.1f), (%.1f <= y <= %.1f)' % 
+                         (Snap.x1[zmin], Snap.x1[zmax], Snap.x2[xmin], Snap.x2[xmax], Snap.x3[ymin], Snap.x3[ymax-1]))
+    numer = 0
+    denom = 0
+    for i in range(zmin, zmax):
+        for j in range(xmin, xmax):
+            for k in range(len(Snap.x3)):
+                if(Snap.q['v1'][i,j,k] >= v_min):
+                    scale_factor = (Snap.cooling_times[i,j,k]
+                                    /Snap.flow_times[i,j,k])
+                    if(scale_factor>1): scale_factor=1 
+                        # can't be more than 1  
+                    numer += (Snap.ion_fractions[i,j,k] * 
+                              Snap.q['d'][i,j,k] 
+                              * Snap.del3[k] 
+                              * scale_factor)
+                    denom += Snap.q['d'][i,j,k] * Snap.del3[k]
+    if(denom==0): return 0
+    return(numer/denom)
+def vol_ionfrac_average_ratio(Snap, year, xmin, xmax, zmin, zmax, v_min, ymin=0, ymax=False, to_print=False):
+    if(not ymax): ymax = len(Snap.x3)
+    if(to_print): print('(%.1f <= z < %.1f), (%.1f <= x < %.1f), (%.1f <= y <= %.1f)' % 
+                         (Snap.x1[zmin], Snap.x1[zmax], Snap.x2[xmin], Snap.x2[xmax], Snap.x3[ymin], Snap.x3[ymax-1]))
+    numer = 0
+    denom = 0
+    for i in range(zmin, zmax):
+        for j in range(xmin, xmax):
+            for k in range(len(Snap.x3)):
+                scale_factor = (Snap.cooling_times[i,j,k]
+                                    /Snap.flow_times[i,j,k])
+                if(scale_factor>1): scale_factor=1 
+                    # can't be more than 1
+                if(Snap.q['v1'][i,j,k] >= v_min):
+                    numer += (Snap.ion_fractions[i,j,k] 
+                              * Snap.del3[k] 
+                              * scale_factor)
+                    denom += Snap.del3[k]
+    if(denom==0): return 0
+    return(numer/denom)
+
+def emis_ionfrac_average_ratio(Snap, year, nu, xmin, xmax, zmin, zmax, v_min, ymin=0, ymax=False, to_print=False):
+    Snap.load_intensity_variables(nu)
+    if(not ymax): ymax = len(Snap.x3)
+    if(to_print): print('(%.1f <= z < %.1f), (%.1f <= x < %.1f), (%.1f <= y <= %.1f)' % 
+                         (Snap.x1[zmin], Snap.x1[zmax], Snap.x2[xmin], Snap.x2[xmax], Snap.x3[ymin], Snap.x3[ymax-1]))
+    numer = 0
+    denom = 0
+    for i in range(zmin, zmax):
+        for j in range(xmin, xmax):
+            for k in range(len(Snap.x3)):
+                if(Snap.q['v1'][i,j,k] >= v_min):
+                    numer += Snap.ion_fractions[i,j,k] * Snap.emission_coefs[i,j,k] * Snap.del3[k] #with delta
+                    denom += Snap.emission_coefs[i,j,k] * Snap.del3[k]
+    if(denom==0): return 0
+    return(numer/denom)
+
+def make_mass_ionfrac_ratio_arrays(Snap, Year,
+        ionfrac_heights, z_segments, xsquare, xslice, ):
+    Snap.mass_ionfrac_xsquare = np.zeros((len(v_mins), 
+                                   len(ionfrac_heights)))
+    Snap.mass_ionfrac_xslice = np.zeros((len(v_mins), 
+                                   len(ionfrac_heights)))
+    for i in range(25):
+        for v in range(len(v_mins)):
+            Snap.mass_ionfrac_xsquare[v,i] = \
+            mass_ionfrac_average_ratio(Snap, Year, 
+                                xsquare[0], xsquare[1], 
+                        z_segments[i], z_segments[i+1], 
+                                       v_min=v_mins[v])
+            Snap.mass_ionfrac_xslice[v,i] = \
+            mass_ionfrac_average_ratio(Snap, Year, 
+                                xslice[0], xslice[1], 
+                        z_segments[i], z_segments[i+1], 
+                                       v_min=v_mins[v])
+    print('%s mass ionfrac ratio arrays made' % (Year))
+
+def make_vol_ionfrac_ratio_arrays(Snap, Year,
+        ionfrac_heights, z_segments, xsquare, xslice, ):
+    Snap.vol_ionfrac_xsquare = np.zeros((len(v_mins), 
+                                len(ionfrac_heights)))
+    Snap.vol_ionfrac_xslice = np.zeros((len(v_mins), 
+                                len(ionfrac_heights)))
+    for i in range(25):
+        for v in range(len(v_mins)):
+            Snap.vol_ionfrac_xsquare[v,i] = \
+            vol_ionfrac_average_ratio(Snap, Year, 
+                                xsquare[0], xsquare[1], 
+                        z_segments[i], z_segments[i+1], 
+                                      v_min=v_mins[v])
+            Snap.vol_ionfrac_xslice[v,i] = \
+            vol_ionfrac_average_ratio(Snap, Year, 
+                                xslice[0], xslice[1], 
+                        z_segments[i], z_segments[i+1], 
+                                      v_min=v_mins[v])
+    print('%s vol ionfrac ratio arrays made' % (Year))
+
+def make_emis_ionfrac_ratio_arrays(Snap, Year, nu,
+        ionfrac_heights, z_segments, xsquare, xslice, ):
+    Snap.emis_ionfrac_xsquare = np.zeros((len(v_mins), 
+                                len(ionfrac_heights)))
+    Snap.emis_ionfrac_xslice = np.zeros((len(v_mins), 
+                                len(ionfrac_heights)))
+    for i in range(25):
+        for v in range(len(v_mins)):
+            Snap.emis_ionfrac_xsquare[v,i] = \
+            emis_ionfrac_average_ratio(Snap, Year, nu, 
+                                xsquare[0], xsquare[1], 
+                        z_segments[i], z_segments[i+1], 
+                                       v_min=v_mins[v])
+            Snap.emis_ionfrac_xslice[v,i] = \
+            emis_ionfrac_average_ratio(Snap, Year, nu, 
+                                xslice[0], xslice[1], 
+                        z_segments[i], z_segments[i+1], 
+                                       v_min=v_mins[v])
+    print('%s emis ionfrac ratio arrays made (nu=%s)' % (Year, str(nu/10**9)))
+    
+             
+def save_ionfrac_ratio_profile(Snap):
+    data_path = (VICO_loc+'/Data/'+Snap.name+'/')
+    np.savez((data_path+Snap.name
+              +'_ionfrac_ratio_profile.npz'), 
+             mass_ionfrac_xsquare = \
+             Snap.mass_ionfrac_xsquare, 
+             mass_ionfrac_xslice = \
+             Snap.mass_ionfrac_xslice,
+             vol_ionfrac_xsquare = \
+             Snap.vol_ionfrac_xsquare, 
+             vol_ionfrac_xslice = \
+             Snap.vol_ionfrac_xslice, 
+             emis_ionfrac_xsquare = \
+             Snap.emis_ionfrac_xsquare, 
+             emis_ionfrac_xslice = \
+             Snap.emis_ionfrac_xslice)
+    
+def load_ionfrac_ratio_profile(Snap):
+    data_path = (VICO_loc+'/Data/'+Snap.name+'/')
+    loaded_ionfrac_profile= np.load((data_path+Snap.name
+                        +'_ionfrac_ratio_profile.npz'))
+    Snap.mass_ionfrac_xsquare = \
+    loaded_ionfrac_profile['mass_ionfrac_xsquare']
+    Snap.mass_ionfrac_xslice =  \
+    loaded_ionfrac_profile['mass_ionfrac_xslice']
+    Snap.vol_ionfrac_xsquare = \
+    loaded_ionfrac_profile['vol_ionfrac_xsquare']
+    Snap.vol_ionfrac_xslice = \
+    loaded_ionfrac_profile['vol_ionfrac_xslice']
+    Snap.emis_ionfrac_xsquare =  \
+    loaded_ionfrac_profile['emis_ionfrac_xsquare']
+    Snap.emis_ionfrac_xslice = \
+    loaded_ionfrac_profile['emis_ionfrac_xslice']
+    print(Snap, 'ionfrac_ratio_profile loaded')
