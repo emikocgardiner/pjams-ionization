@@ -47,7 +47,7 @@ import matplotlib.colors as mplcols
 
 
 #################################################
-#### Load ionfrac arrays 
+#### Load and save ionfrac arrays 
 # #################################################
 
 
@@ -67,9 +67,38 @@ def load_average_ionfrac_array_ratio(Snap, const=False, debug=False):
     Snap.ionfrac_emis_ratio = loaded_average_ionfracs['ionfrac_emis']
     if debug: print(Snap.name + ' ionfrac_ratio arrays loaded')
 
+def save_average_ionfrac_array_ratio(Snap, const=False):
+    data_path = (VICO_loc+'/Data/'+Snap.name+'/')
+    np.savez((data_path+Snap.name+'_average_ionfrac_arrays_const'+str(const)+'.npz'), 
+                ionfrac_mass = Snap.ionfrac_mass_ratio,
+                ionfrac_vol = Snap.ionfrac_vol_ratio, 
+                ionfrac_emis = Snap.ionfrac_emis_ratio)
 
 
+#####################################################################################################
+################### Map Ionization Fractions Arrays ######################################
+#####################################################################################################
 
+def emis_ionfrac_array_const(Snap, v_mins=V_MINS, f=5, const=False):
+    Snap.load_intensity_variables(FREQS[f])
+    ionfrac_emis = np.zeros((len(FREQS),len(v_mins),len(Snap.x1), len(Snap.x2)))
+    for v in range(len(v_mins)):
+        for i in range(len(Snap.x1)):
+            for j in range(len(Snap.x2)):
+                numer = 0
+                denom = 0
+                for k in range(len(Snap.x3)):
+                    if(Snap.q['v1'][i,j,k] >= v_mins[v]):
+                        if(const): scale_factor = const
+                        else: 
+                            scale_factor = Snap.cooling_times[i,j,k]/Snap.flow_times[i,j,k]
+                            if(scale_factor>1): scale_factor=1 # can't be more than 1
+                        numer += Snap.ion_fractions[i,j,k] * Snap.emission_coefs[i,j,k] * Snap.del3[k] * scale_factor
+                        denom += Snap.emission_coefs[i,j,k] * Snap.del3[k] * scale_factor
+                if(denom>0): ionfrac_emis[f,v,i,j] = numer/denom
+                else: ionfrac_emis[f,v,i,j] = 0 
+    if(const): Snap.ionfrac_emis_const = ionfrac_emis
+    else: Snap.ionfrac_emis_ratio = ionfrac_emis
 
 
 
@@ -497,6 +526,10 @@ def emis_ionfrac_const_pcolormesh(Snap, year, scale, f, vmin, vmax, v, const=Fal
     return fig
 
 
+
+
+
+
 #####################################################################################################
 ################### 3D Average ionization fractions (not for table) ######################################
 #####################################################################################################
@@ -896,6 +929,8 @@ def load_ionfrac_ratio_profile(Snap):
     loaded_ionfrac_profile['emis_ionfrac_xslice']
     print(Snap, 'ionfrac_ratio_profile loaded')
 
+
+'''
     ####################### NEW FLUX PROFILES ######################
     ################################################################
 def get_z_segments(x1, targets=np.linspace(0,26000,27)):
@@ -938,3 +973,5 @@ def make_mass_chi_profiles(snap, zseg, ratio=False, v_mins=v_mins):
     for v_min in v_mins:
         for ii in range(len(zseg)-1):
             mass_chi_in_slice(snap, v_min, zseg[ii], zseg[ii+1], ratio=ratio)
+
+'''
