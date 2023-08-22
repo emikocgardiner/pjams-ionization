@@ -89,6 +89,11 @@ def numdensity_slice_pcolormesh(Snap, year, scale, vmin, vmax, cmap='cividis',
     ax.set_facecolor('darkkhaki')
 
     numdensity = Snap.q['d'][:,:,Snap.mid3] / Constants.m_H
+    # print(f"{year}:, min = {np.nanmin(numdensity):.2e}, max = {np.nanmax(numdensity):.2e}")
+    # print(f"\t5th perc = {np.percentile(numdensity, (5)):.2e}, 95th perc = {np.percentile(numdensity, (95)):.2e}")
+    print(f"{year}:, min = {np.nanmin(Snap.q['d'][:,:,Snap.mid3]):.2e}, max = {np.nanmax(Snap.q['d'][:,:,Snap.mid3]):.2e}")
+    print(f"\t5th perc = {np.percentile(Snap.q['d'][:,:,Snap.mid3], (5)):.2e}, 95th perc = {np.percentile(Snap.q['d'][:,:,Snap.mid3], (95)):.2e}")
+
 
     cont = ax.pcolormesh(Snap.X2_1v, Snap.X1_2v, np.log10(np.rot90(numdensity)), 
                                vmin=vmin, vmax=vmax, cmap = cmap, shading='nearest')

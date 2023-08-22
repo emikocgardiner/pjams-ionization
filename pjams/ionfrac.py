@@ -443,6 +443,8 @@ def emis_ionfrac_const_pcolormesh(Snap, year, scale, f, vmin, vmax, v, const=Fal
     ax.set_xlim(-scale/2, scale/2)
     ax.set_ylim(0, scale)
     ax.set_facecolor('black')
+
+
     
     if(const):
         cont = ax.pcolormesh(Snap.X2_1v , Snap.X1_2v, np.rot90(np.log10(Snap.ionfrac_emis_const[f,v,:,:])), 
@@ -450,6 +452,7 @@ def emis_ionfrac_const_pcolormesh(Snap, year, scale, f, vmin, vmax, v, const=Fal
     else:
         cont = ax.pcolormesh(Snap.X2_1v , Snap.X1_2v, np.rot90(np.log10(Snap.ionfrac_emis_ratio[f,v,:,:])), 
                                vmin=vmin, vmax=vmax, cmap = cmap, shading='nearest')
+        print(stats(Snap.ionfrac_emis_ratio))
     if(show_xlabels):
         ax.set_xticks([-scale*.25, 0, scale*.25])
         ax.set_xlabel('$x$ (au)', fontsize=28)
@@ -492,3 +495,115 @@ def emis_ionfrac_const_pcolormesh(Snap, year, scale, f, vmin, vmax, v, const=Fal
         plt.close(fig)
         return filename
     return fig
+
+
+
+def mass_avg_3d_ionfrac(Snap, v_cutoff, scale):
+    numer = 0
+    denom = 0
+    for i in range(len(Snap.x1)):
+        if((Snap.x1[i]) <= scale):
+            for j in range(len(Snap.x2)):
+                if(np.abs(Snap.x2[j] <= scale/2)):
+                    for k in range(len(Snap.x3)):
+                        if(Snap.q['v1'][i,j,k]>=v_cutoff):
+                            numer += (Snap.ion_fractions[i,j,k] * Snap.q['d'][i,j,k] * 
+                                      Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+                            denom += (Snap.q['d'][i,j,k] * 
+                                      Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+    if(denom==0): return 0
+    return numer/denom
+
+def vol_avg_3d_ionfrac(Snap, v_cutoff, scale):
+    numer = 0
+    denom = 0
+    for i in range(len(Snap.x1)):
+        if((Snap.x1[i]) <= scale):
+            for j in range(len(Snap.x2)):
+                if(np.abs(Snap.x2[j] <= scale/2)):
+                    for k in range(len(Snap.x3)):
+                        if(Snap.q['v1'][i,j,k]>=v_cutoff):
+                            numer += (Snap.ion_fractions[i,j,k]  * 
+                                      Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+                            denom += (Snap.del1[i] * Snap.del2[j] * Snap.del3[k])
+    if(denom==0): return 0
+    return numer/denom
+    
+def emis_avg_3d_ionfrac(Snap, nu, v_cutoff, scale):
+    Snap.load_intensity_variables(nu)
+    numer = 0
+    denom = 0
+    for i in range(len(Snap.x1)):
+        if((Snap.x1[i]) <= scale):
+            for j in range(len(Snap.x2)):
+                if(np.abs(Snap.x2[j] <= scale/2)):
+                    for k in range(len(Snap.x3)):
+                        if(Snap.q['v1'][i,j,k]>=v_cutoff):
+                            numer += (Snap.ion_fractions[i,j,k] * Snap.emission_coefs[i,j,k] * 
+                                      Snap.del3[k])
+                            denom += (Snap.emission_coefs[i,j,k] * 
+                                      Snap.del3[k])
+    if(denom==0): return 0
+    return numer/denom
+
+
+#####################################################################################################
+################### Map Average ionization fractions for Table ######################################
+
+def calculate_column_mass_densities(Snap):
+    Snap.column_mass_densities = np.zeros((len(Snap.x1), len(Snap.x2)))
+    for i in range(len(Snap.x1)):
+        for j in range(len(Snap.x2)):
+            numer = 0
+            denom = 0
+            for k in range(len(Snap.x3)):
+                numer += (Snap.q['d'][i,j,k] * Snap.del3[k]) #number density
+                denom += Snap.del3[k]
+            if (denom == 0):
+                Snap.column_mass_densities[i,j] = 0
+            else:
+                Snap.column_mass_densities[i,j] = numer/denom  
+
+def mass_avg_map_ionfrac(Snap, v, scale, cooled=False):
+    ionfrac_mass = Snap.ionfrac_mass_ratio if cooled else Snap.ionfrac_mass
+
+    numer = 0
+    denom = 0
+    for i in range(len(Snap.x1)):
+        if((Snap.x1[i]) <= scale):
+            for j in range(len(Snap.x2)):
+                if(np.abs(Snap.x2[j] <= scale/2)):
+                    numer += (ionfrac_mass[v,i,j] * Snap.column_mass_densities[i,j] 
+                              * Snap.del1[i] * Snap.del2[j])
+                    denom += Snap.column_mass_densities[i,j] * Snap.del1[i] * Snap.del2[j]
+    Snap.avg_map_ionfrac_mass = numer/denom
+    return numer/denom
+
+def vol_avg_map_ionfrac(Snap, v, scale, cooled=False):
+    ionfrac_vol = Snap.ionfrac_vol_ratio if cooled else Snap.ionfrac_vol
+    numer = 0
+    denom = 0
+    for i in range(len(Snap.x1)):
+        if((Snap.x1[i]) <= scale):
+            for j in range(len(Snap.x2)):
+                if(np.abs(Snap.x2[j] <= scale/2)):
+                    numer += ionfrac_vol[v,i,j] * Snap.del1[i] * Snap.del2[j]
+                    denom += Snap.del1[i] * Snap.del2[j]
+    Snap.avg_map_ionfrac_vol = numer/denom
+    return numer/denom
+    
+def emis_avg_map_ionfrac(Snap, f, v, scale, cooled=False):
+    ionfrac_emis = Snap.ionfrac_emis_ratio if cooled else Snap.ionfrac_emis
+    InuA = Snap.InuA_const if cooled else Snap.InuA
+    # InuA = Snap.InuA
+    Snap.load_intensity_variables(FREQS[f])
+    numer = 0
+    denom = 0
+    for i in range(len(Snap.x1)):
+        if((Snap.x1[i]) <= scale):
+            for j in range(len(Snap.x2)):
+                if(np.abs(Snap.x2[j] <= scale/2)):
+                    numer += ionfrac_emis[f,v,i,j] * InuA[i,j] * Snap.del1[i] * Snap.del2[j]
+                    denom += InuA[i,j] * Snap.del1[i] * Snap.del2[j]
+    Snap.avg_map_ionfrac_emis = numer/denom
+    return numer/denom
